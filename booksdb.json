@@ -1,0 +1,15 @@
+{
+   "Book": 
+   {
+      "@read": "false",
+      "Title": "Poderes Psíquicos",
+      "Author": 
+      {
+         "FName": [],
+         "LName": []
+      },
+      "Pages": [],
+      "Format": "Físico",
+      "Owner": "Melissa"
+   }
+}
