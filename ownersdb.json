@@ -1,12 +1,14 @@
-[   
-   {
-      "FNames": "Melissa",
-      "LNames": "Santos Cortés",
-      "NickName": []
-   },   
-   {
-      "FNames": "Miguel",
-      "LNames": "Arámburo",
-      "NickName": "Morgan"
-   }
+[
+  {
+    "@pref": 0,
+    "FNames": "Melissa",
+    "LNames": "Santos Cortés",
+    "NickName": null
+  },
+  {
+    "@pref": 2,
+    "FNames": "Miguel",
+    "LNames": "Arámburo",
+    "NickName": "Morgan"
+  }
 ]

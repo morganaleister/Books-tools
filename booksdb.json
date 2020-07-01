@@ -1,15 +1,38 @@
-{
-   "Book": 
-   {
-      "@read": "false",
-      "Title": "Poderes Psíquicos",
-      "Author": 
-      {
-         "FName": [],
-         "LName": []
-      },
-      "Pages": [],
-      "Format": "Físico",
-      "Owner": "Melissa"
-   }
-}
+[
+  {
+    "@read": false,
+    "Title": "Poderes Psíquicos",
+    "Subtitle": null,
+    "Author": {
+      "FName": null,
+      "LName": null
+    },
+    "Pages": null,
+    "Format": "Físico",
+    "Owner": "Melissa"
+  },
+  {
+    "@read": false,
+    "Title": "El Libro de las Brujas",
+    "Subtitle": "La Tradición Mágica de las Meigas",
+    "Author": {
+      "FName": "J.P.",
+      "LName": "Duarte"
+    },
+    "Pages": 155,
+    "Format": "Físico",
+    "Owner": "Morgan"
+  },
+  {
+    "@read": false,
+    "Title": "Sus Poderes Psíquicos y la Inmortalidad",
+    "Subtitle": null,
+    "Author": {
+      "FName": "John Alan",
+      "LName": "Appleman"
+    },
+    "Pages": 178,
+    "Format": "Físico",
+    "Owner": "Morgan"
+  }
+]
