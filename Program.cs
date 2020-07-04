@@ -249,9 +249,27 @@ namespace Books_tools
 
         private static void UpdateLangs()
         {
-            if (File.Exists(settings_file)) File.Delete(settings_file);
-            
-            SettingsCheck();
+            JsonSerializer serializer = new JsonSerializer();
+
+            using (FileStream fs = File.Open(settings_file, FileMode.Open, 
+                FileAccess.ReadWrite, FileShare.None))
+            using (TextReader tr = new StreamReader(fs))
+            using (TextWriter tw = new StreamWriter(fs)) 
+            using(JsonReader jr = new JsonTextReader(tr))
+            using (JsonWriter jw = new JsonTextWriter(tw)) 
+            {
+
+                while (jr.Read())
+                {
+                    if ((string)jr.Value == "available_langs")
+                    {
+                        jr.Read();
+                        
+                    }
+                }
+
+
+            }
         }
 
 
