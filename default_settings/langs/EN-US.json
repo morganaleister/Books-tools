@@ -6,6 +6,6 @@
   "[. . .]",
   "Press [Enter] key to issue commands.",
   "Type 'help' to show all commands",
-  "Type 'titles' to list Book Titles",
+  "Type 'list' to list Book Titles",
   "Type the number inside the brackets ([#]) next to a book title to show more info about the book"
 ]

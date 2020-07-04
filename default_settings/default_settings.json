@@ -5,8 +5,11 @@
     { "available_langs": [ "ES-MX", "EN-US" ] }
   ],
   "commands": [
-    { "exit": [ "e", "salir", "s", "x" ] },
+    { "exit": [ "salir", "s", "x" ] },
     { "help": [ "h", "ayuda" ] },
-    { "titles": [ "titulos", "list", "t", "l" ] }
+    { "list": [ "titulos", "list", "t", "l" ] },
+    { "filter": ["f", "filtro"] },
+    { "edit": [] },
+    { "settings": [] }
   ]
 }
