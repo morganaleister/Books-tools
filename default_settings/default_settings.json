@@ -1,0 +1,12 @@
+{
+  "settings": 
+  [
+    { "lang": "ES-MX" },
+    { "available_langs": [ "ES-MX", "EN-US" ] }
+  ],
+  "commands": [
+    { "exit": [ "e", "salir", "s", "x" ] },
+    { "help": [ "h", "ayuda" ] },
+    { "titles": [ "titulos", "list", "t", "l" ] }
+  ]
+}
