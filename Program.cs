@@ -7,20 +7,22 @@ namespace Books_tools
 {
     class Program
     {
-        private static readonly string default_path = "settings\\";
-        private static readonly string settings_file = default_path + "settings.json";
-        private static readonly string langs_path = default_path + "langs\\";
-        private static readonly string default_language = "ES-MX";
-        private static readonly string[] default_commands
+        internal static readonly string default_path = "settings\\";
+        internal static readonly string books_path = default_path + "booksdb.json";
+        internal static readonly string settings_file = default_path + "settings.json";
+        internal static readonly string langs_path = default_path + "langs\\";
+        internal static readonly string default_language = "ES-MX";
+        internal static readonly string[] default_commands
             = new string[] { "exit", "help", "list", "filter", "edit", "settings" };
 
         private static string lang;
         private static string[] langs;
-        private static string[] Lines;
+        private static Dictionary<string,string[]> Lines;
         private static string[][] Commands;
 
         private enum IssuableCommands
         {
+            none = -1,
             exit, 
             help,
             list,
@@ -55,98 +57,24 @@ namespace Books_tools
             if (!Directory.Exists(default_path)) Directory.CreateDirectory(default_path);
 
             ///Check for languages directory to exist, and creates one if not along with default language file
-            if (!Directory.Exists(langs_path))
+            if (!Directory.Exists(langs_path)) Directory.CreateDirectory(langs_path);
+
+            if (Directory.GetFiles(langs_path).Length < 2)
             {
-                Directory.CreateDirectory(langs_path);                
-
-                //create and write default language json file
-                using (FileStream fs = File.OpenWrite(langs_path + "ES-MX.json"))
-                using (TextWriter tw = new StreamWriter(fs))
-                using (JsonWriter jw = new JsonTextWriter(tw))
-                {
-                    jw.WriteStartArray();
-                    foreach (string s in new string[] //default language strings
-                {
-                    "Bienvenid@!!       Lang: ",
-                    "El programa está cargando la base de datos, espera un momento por favor...",
-                    "[.    ]",
-                    "[. .  ]",
-                    "[. . .]",
-                    "Presiona [Enter] para enviar un comando",
-                    "Escribe 'ayuda' para mostrar todos los comandos",
-                    "Escribe 'titulos' (sin acento) para enlistar los libros por título",
-                    "Escribe el número dentro de los corchetes ([#]) junto al título de un libro para mostrar más información del libro"
-
-                })
-                    {
-                        jw.WriteValue(s);
-                    }
-                    jw.WriteEndArray();
-                }
+                JsonGenerator.GenerateFile(langs_path, lang, JsonGenerator.FileTypes.es_mx);
+                JsonGenerator.GenerateFile(langs_path, lang, JsonGenerator.FileTypes.en_us);
             }
-
             ///Check for settings file to exist, and creates one if not
             if (!File.Exists(settings_file))
             {
 
-                using (FileStream fs = File.OpenWrite(settings_file))
-                using (TextWriter tw = new StreamWriter(fs))
-                using (JsonWriter jw = new JsonTextWriter(tw))
-                {
-                    jw.WriteStartObject();
-
-                    jw.WritePropertyName("settings");
-                    jw.WriteStartArray();
-
-                        jw.WriteStartObject();
-                        jw.WritePropertyName("lang");
-                            jw.WriteValue(default_language);
-                        jw.WriteEndObject();
-
-                        jw.WriteStartObject();
-                        jw.WritePropertyName("available_langs");
-                        jw.WriteStartArray();
-
-                            WriteLangs(jw);
-
-                        jw.WriteEndArray();
-                        jw.WriteEndObject();
-
-                    jw.WriteEndArray();
-
-                    jw.WritePropertyName("commands");
-                    jw.WriteStartArray();
-
-                        WriteCommands(jw);
-
-                    jw.WriteEndArray();
-                }
             }
 
             
         }
-        private static void WriteLangs(JsonWriter jsonWriter)
-        {
-            string[] langspaths = Directory.GetFiles(langs_path);
 
-            for (int i = 0; i < langspaths.Length; i++)
-            {
-                jsonWriter.WriteValue(Path.GetFileNameWithoutExtension(langspaths[i]));
-            }
-
-        }
-        private static void WriteCommands(JsonWriter jsonWriter)
-        {
-            for (int cmdNo = 0; cmdNo < default_commands.Length; cmdNo++)
-            {
-                jsonWriter.WriteStartObject();
-                jsonWriter.WritePropertyName(default_commands[cmdNo]);
-                jsonWriter.WriteStartArray();
-                //empty array []
-                jsonWriter.WriteEndArray();
-                jsonWriter.WriteEndObject();
-            }
-        }
+        
+        
         private static void InitializeProgram()
         {
             JsonSerializer serializer = new JsonSerializer();
@@ -202,7 +130,7 @@ namespace Books_tools
                         strList.Add((string)jr.Value);
                     }
                 }
-                Lines = strList.ToArray();
+                //Lines = strList.ToArray();
             }
         }
         /// <summary>
@@ -247,8 +175,11 @@ namespace Books_tools
 
         private static void Welcome()
         {
-            Console.WriteLine(Lines[0] + lang);
-            Console.WriteLine(Lines[1]);
+         
+            Console.WriteLine(Lines["WelcomeLines"][1] + lang);
+            Console.WriteLine(Lines["WelcomeLines"][0]);
+            Console.WriteLine(Lines["WelcomeLines"][2]);
+            Console.WriteLine(Lines["WelcomeLines"][3]);
         }
 
         private static void ReadBooksDB()
@@ -259,7 +190,7 @@ namespace Books_tools
 
             List<Book> booklist = new List<Book>();
 
-            using (FileStream filestrm = File.OpenRead("booksdb.json"))
+            using (FileStream filestrm = File.OpenRead(books_path))
             using (StreamReader streamrdr = new StreamReader(filestrm))
             using (JsonReader jreadr = new JsonTextReader(streamrdr))
             {
@@ -290,30 +221,73 @@ namespace Books_tools
         }
         private static void PrintInstructions()
         {
-            for (int i = 6; i < Lines.Length; i++)
-            {
-                Console.WriteLine(Lines[i]);
-            }
-            Console.WriteLine("\nIssue Command:");
+            //for (int i = 5; i < Lines.Length; i++)
+            //{
+            //    Console.WriteLine(Lines[i]);
+            //}
+            //Console.WriteLine("\nIssue Command:");
         }
         private static void WaitForInput()
         {
-            IssuableCommands issuedCmd;
-            string preCmd;
+            IssuableCommands issuedCmd = IssuableCommands.none;
 
-            do
+            while (true)
             {
-                preCmd = Console.ReadLine();
+                string preCmd = Console.ReadLine().Replace(" ", "").ToLowerInvariant();
 
-                
+                bool broke = false;
+                for (int i = 0; i < Commands.Length; i++)
+                {
+                    if (broke) break;
+                    for (int j = 0; j < Commands[i].Length; j++)
+                    {
+                        if (preCmd == Commands[i][j])
+                        {
+                            issuedCmd = (IssuableCommands)i;
+                            broke = true;
+                            break;
+                        }
+                    }
+                }
 
-            } while (issuedCmd != IssuableCommands.exit);
-
-             = 
-            string.Format("");
-
+                DoCommand(issuedCmd);
+            }
         }
 
+        private static void DoCommand(IssuableCommands command)
+        {
+            switch (command)
+            {                
+                case IssuableCommands.exit:
+                    Terminate();
+                    break;
+                case IssuableCommands.help:
+                    break;
+                case IssuableCommands.list:
+                    break;
+                case IssuableCommands.filter:
+                    break;
+                case IssuableCommands.edit:
+                    break;
+                case IssuableCommands.settings:
+                    break;
+                default:
+                    Console.WriteLine(Lines["Warnings"][3]);
+                    break;
+            }
+        }
+
+        public static void Terminate()
+        {
+            //Do cleanup, save,etc PENDING
+
+            //~bybymsg~
+            Console.WriteLine(Lines["Warnings"][5]);
+            Console.ReadKey();
+
+            //~close~
+            Environment.Exit(0);
+        }
 
         private static void UpdateLangs()
         {
